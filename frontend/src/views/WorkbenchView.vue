@@ -70,6 +70,9 @@
       </tbody>
     </table>
 
+    <SourceIntakePanel v-if="meta.key === 'crawler_config'" />
+    <TrialDispatchPanel v-else-if="meta.key === 'crawl_schedule'" />
+
     <div v-if="showCreate" class="modal-backdrop" data-testid="create-modal">
       <form class="modal" @submit.prevent="submitCreate">
         <h3>登记{{ meta.entity }}</h3>
@@ -103,6 +106,8 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/backend-service'
+import SourceIntakePanel from '@/views/SourceIntakePanel.vue'
+import TrialDispatchPanel from '@/views/TrialDispatchPanel.vue'
 import type { EntryRow } from '@/data/types'
 
 const props = defineProps<{ moduleKey: string }>()

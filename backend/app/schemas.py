@@ -29,3 +29,24 @@ class EntryPayload(BaseModel):
 class ActionPayload(BaseModel):
     action: str
     remark: str | None = None
+
+
+class SourceImportPayload(BaseModel):
+    """来源清单 CSV 导入：清单文本 + 随附的本地原页样本。"""
+    csv_text: str
+    samples: list[dict[str, Any]] = Field(default_factory=list)
+    operator: str = "值班员"
+
+
+class SampleSupplementPayload(BaseModel):
+    """补交本地原页样本：按真实起始地址登记并重新核对。"""
+    address: str
+    encoding: str | None = None
+    content_b64: str
+    operator: str = "值班员"
+
+
+class TrialDispatchPayload(BaseModel):
+    """从导入回执发起一次试采派工。"""
+    receipt_id: str
+    operator: str = "值班员"

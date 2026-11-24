@@ -77,5 +77,25 @@ npm run dev
 - 列表接口统一返回 `{ items, total, page, size }`，动作接口统一返回 `{ ok, message }`。
 - 状态流转只允许在 `app/services` 里改，路由层不做业务判断。
 
+## 来源清单导入与试采
+
+爬虫配置模块支持来源清单 CSV 导入：用本地原页样本逐行核对起始地址与页面编码，
+生成采集接入清单并返回导入回执。同名来源按真实起始地址区分；缺样本、编码无法
+识别或解码失败的行保留待查原因。采集调度从导入回执发起试采派工，只读取核对
+通过的来源，已受理的试采不重发；补交原页样本后旧回执保持可查，可再次派工恢复，
+每条试采请求都能回查到原清单行。
+
+| 接口 | 说明 |
+| --- | --- |
+| `POST /api/crawler_config/source-imports` | 导入来源清单 CSV（可随附本地原页样本），生成采集接入清单与导入回执 |
+| `GET /api/crawler_config/source-imports` | 列出全部导入回执（补证不换新回执，旧回执保持可查） |
+| `GET /api/crawler_config/source-imports/{回执编号}` | 查看采集接入清单明细（核对状态、待查原因、核对记录） |
+| `POST /api/crawler_config/source-imports/{回执编号}/samples` | 补交本地原页样本，重新核对该回执中同地址的清单行 |
+| `POST /api/crawl_schedule/trial-dispatches` | 从导入回执发起试采派工（只派工核对通过来源，已受理不重发） |
+| `GET /api/crawl_schedule/trial-dispatches` | 核查入口：实际收到的试采请求及其原清单行 |
+
+前端入口：爬虫配置页底部的「来源清单导入」面板（导入、回执、补证），
+采集调度页底部的「试采派工 / 试采请求核查」面板。
+
 领域：数据工程
 子方向：数据采集、爬虫与RPA
